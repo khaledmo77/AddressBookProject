@@ -1,3 +1,5 @@
+using AddressBook.DAL.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace AddressBookApi
 {
@@ -14,6 +16,9 @@ namespace AddressBookApi
             builder.Services.AddSwaggerGen();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddDbContext<AddressBookContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll",
