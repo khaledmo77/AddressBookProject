@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace AddressBook.Common.DTOs
 {
-    internal class DepartmentDto
+    public class DepartmentDto
     {
+        public int Id { get; set; }
+        public string Name { get; set; } = null!;
+
+        public ICollection<AddressBookEntryDto> AddressBookEntries { get; set; } = new List<AddressBookEntryDto>();
     }
 }

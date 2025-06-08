@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AddressBook.BLL.Services
 {
-    internal class AuthService
+    public class AuthService
     {
     }
 }

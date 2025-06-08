@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace AddressBook.Domain.Entities
 {
     public class AddressBookEntry
@@ -22,6 +23,17 @@ namespace AddressBook.Domain.Entities
         public string Password { get; set; } = null!;
         public string PhotoPath { get; set; } = null!;
         [NotMapped]
-        public int Age => DateTime.Now.Year - DateOfBirth.Year;
+        public int Age
+        {
+            get
+            {
+                var today = DateTime.Today;
+                var age = today.Year - DateOfBirth.Year;
+                if (DateOfBirth.Date > today.AddYears(-age)) age--;
+                return age;
+            }
+        }
+        public int UserId { get; set; }
+   
     }
 }

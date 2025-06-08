@@ -5,9 +5,17 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+<ItemGroup>
+  <FrameworkReference Include="Microsoft.AspNetCore.App" />
+</ItemGroup>	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	
+	<ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\" />
+	<ItemGroup>
+
+		    <PackageReference Include="ClosedXML" Version="0.105.0" />
+<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
   </ItemGroup>
 
 </Project>

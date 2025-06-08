@@ -1,4 +1,9 @@
+using AddressBook.BLL.AutoMapper;
+using AddressBook.BLL.Interfaces;
+using AddressBook.BLL.Services;
 using AddressBook.DAL.Data;
+using AddressBook.DAL.Interfaces;
+using AddressBook.DAL.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace AddressBookApi
@@ -26,8 +31,20 @@ namespace AddressBookApi
                                     .AllowAnyMethod()
                                     .AllowAnyHeader());
             });
+            // Register repositories and services
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            builder.Services.AddScoped<IAddressBookEntryRepository, AddressBookEntryRepository>();
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            builder.Services.AddScoped<IJobRepository, JobRepository>();
+            builder.Services.AddScoped<IAddressBookEntryService, AddressBookEntryService>();
+            builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+            builder.Services.AddScoped<IJobService, JobService>();
 
-       
+
+
+            //automapper
+            builder.Services.AddAutoMapper(typeof(AddressBookMappingProfile));
+
 
 
             var app = builder.Build();

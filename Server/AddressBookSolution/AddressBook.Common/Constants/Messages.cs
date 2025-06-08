@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace AddressBook.Common.Constants
 {
-    internal class Messages
+    public static class Messages
     {
+        public const string InvalidEmail = "Invalid email format.";
+        public const string RequiredField = "This field is required.";
     }
 }
