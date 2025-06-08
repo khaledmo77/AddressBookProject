@@ -10,7 +10,8 @@ namespace AddressBook.Common.DTOs
    
         public class AddressBookEntryDto
         {
-            public string FullName { get; set; } = null!;
+             public int Id { get; set; }
+             public string FullName { get; set; } = null!;
             public int JobId { get; set; }
             public int DepartmentId { get; set; }
             public string JobTitle { get; set; } = null!;
@@ -18,6 +19,8 @@ namespace AddressBook.Common.DTOs
             public string MobileNumber { get; set; } = null!;
             public string Address { get; set; } = null!;
             public string Email { get; set; } = null!;
+            public string Password { get; set; } = null!;
+
             public IFormFile Photo { get; set; } = null!;
             public DateTime DateOfBirth { get; set; }
             public DateTime BirthDateFrom { get; set; }

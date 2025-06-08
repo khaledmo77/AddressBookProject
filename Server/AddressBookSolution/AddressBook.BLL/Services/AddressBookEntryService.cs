@@ -42,21 +42,32 @@ namespace AddressBook.BLL.Services
             return new ApiResponse<AddressBookEntryDto>(true,"Data fetched successfully", dto);
 
         }
-        public async Task<ApiResponse<bool>> AddAsync(AddressBookEntryDto dto)
+        public async Task<ApiResponse<AddressBookEntryDto>> AddAsync(CreateAddressBookDto dto)
         {
+            if (dto == null)
+            {
+                return new ApiResponse<AddressBookEntryDto>(false, "Invalid entry data.", null);
+            }
+
             var exists = await _addressBookEntryRepository.ExistsAsync(dto.Email, dto.MobileNumber);
             if (exists)
-                return new ApiResponse<bool>(false, "Email or Mobile number already exists.", false);
+            {
+                return new ApiResponse<AddressBookEntryDto>(false, "Email or Mobile number already exists.", null);
+            }
 
             var entity = _mapper.Map<AddressBookEntry>(dto);
-          
 
             if (dto.Photo != null)
-                entity.PhotoPath =  FileHelper.SaveFile(dto.Photo);
+                entity.PhotoPath = FileHelper.SaveFile(dto.Photo);
 
             await _addressBookEntryRepository.AddAsync(entity);
-            return new ApiResponse<bool>(true, "Address Book Entry Added Successfully", true);
+
+            // Map back to DTO with Id
+            var resultDto = _mapper.Map<AddressBookEntryDto>(entity);
+
+            return new ApiResponse<AddressBookEntryDto>(true, "Address Book Entry Added Successfully", resultDto);
         }
+
         public async  Task<ApiResponse<bool>> UpdateAsync(int id, AddressBookEntryDto dto)
         {
             var existingEntry = await _addressBookEntryRepository.GetByIdAsync(id);
@@ -88,7 +99,7 @@ namespace AddressBook.BLL.Services
             return new ApiResponse<bool>(true, "Address Book Entry Deleted Successfully", true);
 
         }
-      public async  Task<ApiResponse<List<AddressBookEntryDto>>> SearchAsync(AddressBookEntryDto dto)
+      public async  Task<ApiResponse<List<SearchAddressBookDto>>> SearchAsync(SearchAddressBookDto dto)
         {
             var entries = await _addressBookEntryRepository.SearchAsync(
                 dto.FullName,
@@ -103,10 +114,10 @@ namespace AddressBook.BLL.Services
                 dto.BirthDateTo);
             if (entries == null || !entries.Any())
             {
-                return new ApiResponse<List<AddressBookEntryDto>>(false, "No entries found.", new List<AddressBookEntryDto>());
+                return new ApiResponse<List<SearchAddressBookDto>>(false, "No entries found.", new List<SearchAddressBookDto>());
             }
-            var dtoList = _mapper.Map<List<AddressBookEntryDto>>(entries);
-            return new ApiResponse<List<AddressBookEntryDto>>(true, "Search completed successfully.", dtoList);
+            var dtoList = _mapper.Map<List<SearchAddressBookDto>>(entries);
+            return new ApiResponse<List<SearchAddressBookDto>>(true, "Search completed successfully.", dtoList);
 
         }
        public async Task<byte[]> ExportToExcelAsync()
