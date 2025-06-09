@@ -22,7 +22,8 @@ namespace AddressBook.Common.DTOs
             public string Password { get; set; } = null!;
 
             public IFormFile Photo { get; set; } = null!;
-            public DateTime DateOfBirth { get; set; }
+            public string? PhotoUrl { get; set; }
+           public DateTime DateOfBirth { get; set; }
             public DateTime BirthDateFrom { get; set; }
             public DateTime BirthDateTo { get; set; }
             public int AgeFrom { get; set; }

@@ -5,6 +5,7 @@ using AddressBook.Common.Response;
 using AddressBook.DAL.Interfaces;
 using AddressBook.Domain.Entities;
 using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,10 +19,12 @@ namespace AddressBook.BLL.Services
     {
         private readonly IAddressBookEntryRepository _addressBookEntryRepository;
         private readonly IMapper _mapper;
-        public AddressBookEntryService(IAddressBookEntryRepository addressBookEntryRepository,IMapper mapper)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AddressBookEntryService(IAddressBookEntryRepository addressBookEntryRepository,IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _addressBookEntryRepository = addressBookEntryRepository;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
 
         }
        public async Task<ApiResponse<List<AddressBookEntryDto>>> GetAllAsync()
@@ -64,6 +67,13 @@ namespace AddressBook.BLL.Services
 
             // Map back to DTO with Id
             var resultDto = _mapper.Map<AddressBookEntryDto>(entity);
+            var request = _httpContextAccessor.HttpContext?.Request;
+            string baseUrl = $"{request?.Scheme}://{request?.Host}";
+
+            // Normalize slashes and build full photo URL
+            resultDto.PhotoUrl = !string.IsNullOrEmpty(entity.PhotoPath)
+                ? $"{baseUrl}/{entity.PhotoPath.Replace("\\", "/")}"
+                : null;
 
             return new ApiResponse<AddressBookEntryDto>(true, "Address Book Entry Added Successfully", resultDto);
         }

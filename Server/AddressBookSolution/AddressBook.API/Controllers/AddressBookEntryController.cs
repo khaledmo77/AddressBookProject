@@ -22,6 +22,7 @@ namespace AddressBook.API.Controllers
             _departmentService = departmentService;
             _mapper = mapper;
         }
+        //tested and working fine
         [HttpGet("GetAllEntries")]
         public async Task<IActionResult> GetAllEntries()
         {
@@ -32,6 +33,7 @@ namespace AddressBook.API.Controllers
             }
             return BadRequest(response);
         }
+        //tested and working fine
         [HttpGet("GetEntryById/{id}")]
         public async Task<IActionResult> GetEntryById(int id)
         {
@@ -42,13 +44,29 @@ namespace AddressBook.API.Controllers
             }
             return NotFound(response);
         }
+        [HttpGet("formdata")]
+        public async Task<IActionResult> GetFormData()
+        {
+            var jobs = await _jobService.GetAllAsync();
+            var departments = await _departmentService.GetAllDepartmentsAsync();
+
+            var response = new
+            {
+                Jobs = jobs,
+                Departments = departments
+            };
+
+            return Ok(response);
+        }
+
+        //tested and working fine but need to check for photo upload and response unnessary data also i need to display list of jobs and departments in the frontend
         [HttpPost("AddEntry")]
         public async Task<IActionResult> AddEntry([FromForm] CreateAddressBookDto dto)
         {
             var response = await _addressBookEntryService.AddAsync(dto);
             if (response.Success)
             {
-                return CreatedAtAction(nameof(GetEntryById), new { id = response.Data.Id }, response);
+                return CreatedAtAction(nameof(GetEntryById), new { id = response.Data?.Id }, response);
             }
             return BadRequest(response);
         }

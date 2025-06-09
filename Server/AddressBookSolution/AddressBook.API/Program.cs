@@ -39,6 +39,8 @@ namespace AddressBookApi
             builder.Services.AddScoped<IAddressBookEntryService, AddressBookEntryService>();
             builder.Services.AddScoped<IDepartmentService, DepartmentService>();
             builder.Services.AddScoped<IJobService, JobService>();
+            builder.Services.AddHttpContextAccessor();
+
 
 
 
