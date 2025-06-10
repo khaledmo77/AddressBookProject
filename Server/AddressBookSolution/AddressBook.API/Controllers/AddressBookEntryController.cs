@@ -54,12 +54,13 @@ namespace AddressBook.API.Controllers
             {
                 Jobs = jobs,
                 Departments = departments
+
             };
 
             return Ok(response);
         }
 
-        //tested and working fine but need to check for photo upload and response unnessary data also i need to display list of jobs and departments in the frontend
+     //Done    //tested and working fine but need to check for photo upload and response unnessary data also i need to display list of jobs and departments in the frontend
         [HttpPost("AddEntry")]
         public async Task<IActionResult> AddEntry([FromForm] CreateAddressBookDto dto)
         {
