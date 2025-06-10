@@ -29,7 +29,11 @@ namespace AddressBook.BLL.Services
         }
        public async Task<ApiResponse<List<AddressBookEntryDto>>> GetAllAsync()
         {
-            var entries = await _addressBookEntryRepository.GetAllAsync();
+          var entries = await _addressBookEntryRepository.GetAllAsync(
+           e => e.Job,       
+           e => e.Department 
+       );
+         
             var dtoList = _mapper.Map<List<AddressBookEntryDto>>(entries);
             return new ApiResponse<List<AddressBookEntryDto>>(true,"data fetched successfully",dtoList);
 

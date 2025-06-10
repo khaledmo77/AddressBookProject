@@ -12,10 +12,11 @@ namespace AddressBook.Common.DTOs
         {
              public int Id { get; set; }
              public string FullName { get; set; } = null!;
-            public int JobId { get; set; }
-            public int DepartmentId { get; set; }
-            public string JobTitle { get; set; } = null!;
-            public string DepartmentName { get; set; } = null!;
+
+             public JobDto Job { get; set; } = null!;
+              public DepartmentDto Department { get; set; } = null!;
+        
+        
             public string MobileNumber { get; set; } = null!;
             public string Address { get; set; } = null!;
             public string Email { get; set; } = null!;

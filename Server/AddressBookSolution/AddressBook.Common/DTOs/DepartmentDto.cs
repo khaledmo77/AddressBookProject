@@ -11,6 +11,5 @@ namespace AddressBook.Common.DTOs
         public int Id { get; set; }
         public string Name { get; set; } = null!;
 
-        public ICollection<AddressBookEntryDto> AddressBookEntries { get; set; } = new List<AddressBookEntryDto>();
     }
 }
