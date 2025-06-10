@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using AddressBook.Domain.Entities;
 using AddressBook.Domain.DAL;
+using Microsoft.AspNetCore.Identity;
 namespace AddressBook.DAL.Data
 {
-    public class AddressBookContext: IdentityDbContext<ApplicationUser>  
+    public class AddressBookContext: IdentityDbContext<IdentityUser>  
     {
         public AddressBookContext(DbContextOptions<AddressBookContext> options):base(options) { }
         public DbSet<AddressBookEntry> addressBooks { get; set; }

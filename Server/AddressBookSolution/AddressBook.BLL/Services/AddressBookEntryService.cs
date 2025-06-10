@@ -95,9 +95,9 @@ namespace AddressBook.BLL.Services
                 return new ApiResponse<bool>(false, "Email or Mobile number already exists.", false);
             }
             
-            if (existingEntry == null) { /* handle not found */ }
+            if (existingEntry == null) {}
 
-            // Map fields from dto to existingEntry (do NOT create a new entity)
+         
             existingEntry.FullName = dto.FullName;
             existingEntry.MobileNumber = dto.MobileNumber;
             existingEntry.Address = dto.Address;
@@ -108,7 +108,7 @@ namespace AddressBook.BLL.Services
             if (dto.Photo != null)
                 existingEntry.PhotoPath = FileHelper.SaveFile(dto.Photo);
 
-            // Now update
+           
             await _addressBookEntryRepository.UpdateAsync(existingEntry);
             return new ApiResponse<bool>(true, "Address Book Entry Updated Successfully", true);
 
