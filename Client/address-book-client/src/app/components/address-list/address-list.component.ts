@@ -84,8 +84,8 @@ import { FormsModule } from '@angular/forms';
                   </div>
                 </div>
               </td>
-              <td>{{ entry.jobTitle || 'N/A' }}</td>
-              <td>{{ entry.departmentName || 'N/A' }}</td>
+              <td>{{ getName(entry.job) }}</td>
+              <td>{{ getName(entry.department) }}</td>
               <td>
                 <div>{{ entry.mobileNumber }}</div>
                 <div class="text-muted small">{{ entry.address }}</div>
@@ -118,6 +118,10 @@ export class AddressListComponent implements OnInit {
 
   constructor(private apiService: ApiService) {}
 
+  getName(obj: any): string {
+    return obj?.name || 'N/A';
+  }
+
   ngOnInit(): void {
     this.loadEntries();
   }
@@ -130,6 +134,8 @@ export class AddressListComponent implements OnInit {
     this.apiService.getAddressBookEntries().subscribe({
       next: (entries: AddressBookEntry[]) => {
         this.entries = entries;
+        console.log('First entry job:', entries[0]?.job);
+        console.log('First entry department:', entries[0]?.department);
         this.loading = false;
       },
       error: (err: HttpErrorResponse) => {

@@ -28,10 +28,8 @@ export interface Department {
 export interface AddressBookEntry {
   id: number;
   fullName: string;
-  jobId: number;
-  departmentId: number;
-  jobTitle: string | null;
-  departmentName: string | null;
+  job: object;
+  department: object;
   mobileNumber: string;
   address: string;
   email: string;
