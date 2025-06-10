@@ -75,7 +75,7 @@ namespace AddressBook.BLL.Services
             string baseUrl = $"{request?.Scheme}://{request?.Host}";
 
             // Normalize slashes and build full photo URL
-            resultDto.PhotoUrl = !string.IsNullOrEmpty(entity.PhotoPath)
+            resultDto.PhotoPath = !string.IsNullOrEmpty(entity.PhotoPath)
                 ? $"{baseUrl}/{entity.PhotoPath.Replace("\\", "/")}"
                 : null;
 

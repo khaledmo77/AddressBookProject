@@ -20,7 +20,7 @@ import { FormsModule } from '@angular/forms';
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
+          <ul class="navbar-nav me-auto">
             <li class="nav-item">
               <a class="nav-link active" href="#">Home</a>
             </li>
@@ -28,6 +28,20 @@ import { FormsModule } from '@angular/forms';
               <a class="nav-link" href="#">About</a>
             </li>
           </ul>
+          <form class="d-flex" (ngSubmit)="onSearch()">
+            <div class="input-group">
+              <input 
+                type="search" 
+                class="form-control" 
+                placeholder="Search..." 
+                [(ngModel)]="searchQuery"
+                name="searchQuery"
+                aria-label="Search">
+              <button class="btn btn-light" type="submit">
+                <i class="bi bi-search"></i>
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </nav>
@@ -76,8 +90,13 @@ import { FormsModule } from '@angular/forms';
               <td>{{ entry.id }}</td>
               <td>
                 <div class="d-flex align-items-center">
-                  <img *ngIf="entry.photoUrl" [src]="entry.photoUrl" [alt]="entry.fullName" 
-                       class="rounded-circle me-2" style="width: 40px; height: 40px;">
+                  <img *ngIf="entry.photoPath" 
+                       [src]="getPhotoUrl(entry.photoPath)" 
+                       [alt]="entry.fullName"
+                       class="rounded-circle me-2" 
+                       style="width: 40px; height: 40px; object-fit: cover;"
+                       (error)="handleImageError($event)"
+                       onerror="this.onerror=null; this.src='assets/default-avatar.png';">
                   <div>
                     <div class="fw-bold">{{ entry.fullName }}</div>
                     <div class="text-muted small">{{ entry.email }}</div>
@@ -115,11 +134,49 @@ export class AddressListComponent implements OnInit {
   loading = false;
   error: string | null = null;
   debugInfo: any = null;
+  searchQuery: string = '';
+  private baseUrl = 'https://localhost:7003';
+  private failedImages = new Set<string>();
 
   constructor(private apiService: ApiService) {}
 
   getName(obj: any): string {
     return obj?.name || 'N/A';
+  }
+
+  handleImageError(event: any): void {
+    const img = event.target as HTMLImageElement;
+    const currentSrc = img.src;
+    
+    // If this image has already failed once, don't try again
+    if (this.failedImages.has(currentSrc)) {
+      return;
+    }
+    
+    // Mark this image as failed
+    this.failedImages.add(currentSrc);
+    console.log('Image failed to load:', currentSrc);
+  }
+
+  getPhotoUrl(photoPath: string | null): string {
+    if (!photoPath) return '';
+    // Remove all leading slashes (forward and backward) and prepend backend URL
+    return `${this.baseUrl}/${photoPath.replace(/^[/\\]+/, '')}`;
+  }
+  onSearch(): void {
+    if (!this.searchQuery.trim()) {
+      this.loadEntries();
+      return;
+    }
+
+    const query = this.searchQuery.toLowerCase().trim();
+    this.entries = this.entries.filter(entry => 
+      entry.fullName.toLowerCase().includes(query) ||
+      entry.email.toLowerCase().includes(query) ||
+      this.getName(entry.job).toLowerCase().includes(query) ||
+      this.getName(entry.department).toLowerCase().includes(query) ||
+      entry.mobileNumber.includes(query)
+    );
   }
 
   ngOnInit(): void {
@@ -134,8 +191,11 @@ export class AddressListComponent implements OnInit {
     this.apiService.getAddressBookEntries().subscribe({
       next: (entries: AddressBookEntry[]) => {
         this.entries = entries;
-        console.log('First entry job:', entries[0]?.job);
-        console.log('First entry department:', entries[0]?.department);
+        console.log('Loaded entries:', entries);
+        if (entries.length > 0) {
+          console.log('First entry photo path:', entries[0]?.photoPath);
+          console.log('First entry photo URL:', this.getPhotoUrl(entries[0]?.photoPath));
+        }
         this.loading = false;
       },
       error: (err: HttpErrorResponse) => {

@@ -17,6 +17,7 @@ namespace AddressBook.Common.DTOs
         public string Address { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
+     
 
         public IFormFile Photo { get; set; } = null!;
        

@@ -65,7 +65,7 @@ namespace AddressBookApi
 
             app.UseAuthorization();
 
-
+            app.UseStaticFiles();
             app.MapControllers();
 
             app.Run();

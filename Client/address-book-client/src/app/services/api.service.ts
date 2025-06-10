@@ -35,7 +35,7 @@ export interface AddressBookEntry {
   email: string;
   password: string;
   photo: string | null;
-  photoUrl: string | null;
+  photoPath: string | null;
   dateOfBirth: string;
   birthDateFrom: string;
   birthDateTo: string;

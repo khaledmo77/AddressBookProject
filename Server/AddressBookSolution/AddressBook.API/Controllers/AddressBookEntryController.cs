@@ -15,12 +15,14 @@ namespace AddressBook.API.Controllers
         private readonly IJobService _jobService;
         private readonly IDepartmentService _departmentService;
         private readonly IMapper _mapper;
-        public AddressBookEntryController(IAddressBookEntryService addressBookEntryService, IJobService jobService, IDepartmentService departmentService,IMapper mapper)
+        private readonly IWebHostEnvironment _environment;
+        public AddressBookEntryController(IAddressBookEntryService addressBookEntryService, IJobService jobService, IDepartmentService departmentService,IMapper mapper, IWebHostEnvironment environment)
         {
             _addressBookEntryService = addressBookEntryService;
             _jobService = jobService;
             _departmentService = departmentService;
             _mapper = mapper;
+            _environment = environment;
         }
         //tested and working fine
         [HttpGet("GetAllEntries")]
@@ -59,8 +61,18 @@ namespace AddressBook.API.Controllers
 
             return Ok(response);
         }
+        [HttpGet("GetPhoto/{filename}")]
+        public IActionResult GetPhoto(string filename)
+        {
+            var path = Path.Combine(_environment.WebRootPath, "uploads", filename);
+            if (!System.IO.File.Exists(path))
+                return NotFound();
 
-     //Done    //tested and working fine but need to check for photo upload and response unnessary data also i need to display list of jobs and departments in the frontend
+            var imageBytes = System.IO.File.ReadAllBytes(path);
+            return File(imageBytes, "image/jpeg");
+        }
+
+        //Done    //tested and working fine but need to check for photo upload and response unnessary data also i need to display list of jobs and departments in the frontend
         [HttpPost("AddEntry")]
         public async Task<IActionResult> AddEntry([FromForm] CreateAddressBookDto dto)
         {

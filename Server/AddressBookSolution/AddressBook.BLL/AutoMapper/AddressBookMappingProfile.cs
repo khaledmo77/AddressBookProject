@@ -19,8 +19,8 @@ namespace AddressBook.BLL.AutoMapper
             CreateMap<DepartmentDto, Department>();
             CreateMap<AddressBookEntry, AddressBookEntryDto>().ReverseMap();
             CreateMap<AddressBookEntryDto, AddressBookEntry>();
-            CreateMap<CreateAddressBookDto, AddressBookEntry>()
-              .ForMember(dest => dest.PhotoPath, opt => opt.Ignore());
+            CreateMap<CreateAddressBookDto, AddressBookEntry>();
+              
             CreateMap<AddressBookEntry, CreateAddressBookDto>();
             CreateMap<SearchAddressBookDto, AddressBookEntry>();
             CreateMap<AddressBookEntry, SearchAddressBookDto>();
