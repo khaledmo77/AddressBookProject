@@ -13,7 +13,7 @@ namespace AddressBook.BLL.Interfaces
         Task<ApiResponse<List<AddressBookEntryDto>>> GetAllAsync();
         Task<ApiResponse<AddressBookEntryDto>> GetByIdAsync(int id);
         Task<ApiResponse<AddressBookEntryDto>> AddAsync(CreateAddressBookDto dto);
-        Task<ApiResponse<bool>> UpdateAsync(int id, AddressBookEntryDto dto);
+        Task<ApiResponse<bool>> UpdateAsync(int id, UpdateAddressBookEntryDto dto);
         Task<ApiResponse<bool>> DeleteAsync(int id);
         Task<ApiResponse<List<SearchAddressBookDto>>> SearchAsync(SearchAddressBookDto dto);
         Task<byte[]> ExportToExcelAsync();

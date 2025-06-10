@@ -20,7 +20,9 @@ namespace AddressBook.DAL.Interfaces
            int? ageTo,
            DateTime? birthDateFrom,
            DateTime? birthDateTo);
-        Task<bool> ExistsAsync(string? email, string? mobileNumber);
+        Task<bool> ExistsAsync(string? email, string? mobileNumber, int excludeId);
+        Task<bool> ExistsAsync(string email, string mobileNumber);
+       
     }
  
 }

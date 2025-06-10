@@ -126,8 +126,100 @@ import { FormsModule } from '@angular/forms';
         </table>
       </div>
     </div>
+
+    <div
+      id="editModal"
+      class="modal fade"
+      tabindex="-1"
+      aria-labelledby="editModalLabel"
+      aria-hidden="true"
+      [ngClass]="{'show': isEditModalOpen}"
+      [ngStyle]="{'display': isEditModalOpen ? 'block' : 'none', 'background': isEditModalOpen ? 'rgba(0,0,0,0.5)' : ''}"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Edit Entry</h5>
+            <button type="button" class="btn-close" (click)="closeEditModal()" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="text-center mb-3">
+              <img *ngIf="editForm.photoPath" [src]="getPhotoUrl(editForm.photoPath)" alt="Current Photo" class="img-thumbnail" style="max-width: 120px; max-height: 120px;" />
+            </div>
+            <form (ngSubmit)="saveEdit()">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="fullName" class="form-label">Full Name</label>
+                  <input type="text" class="form-control" id="fullName" name="fullName" [(ngModel)]="editForm.fullName" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="job" class="form-label">Job</label>
+                  <select class="form-select" id="job" name="jobId" [(ngModel)]="editForm.jobId" required>
+                    <option *ngFor="let job of jobs" [value]="job.id">{{ job.name }}</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="department" class="form-label">Department</label>
+                  <select class="form-select" id="department" name="departmentId" [(ngModel)]="editForm.departmentId" required>
+                    <option *ngFor="let department of departments" [value]="department.id">{{ department.name }}</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="mobileNumber" class="form-label">Mobile Number</label>
+                  <input type="text" class="form-control" id="mobileNumber" name="mobileNumber" [(ngModel)]="editForm.mobileNumber" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="address" class="form-label">Address</label>
+                  <input type="text" class="form-control" id="address" name="address" [(ngModel)]="editForm.address" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" class="form-control" id="email" name="email" [(ngModel)]="editForm.email" required>
+                </div>
+                <div class="col-md-6">
+                  <label for="password" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="password" name="password" [(ngModel)]="editForm.password">
+                </div>
+                <div class="col-md-12">
+                  <label for="photoFile" class="form-label">Photo</label>
+                  <input type="file" class="form-control" id="photoFile" name="photoFile" (change)="onEditFileChange($event)">
+                </div>
+              </div>
+              <div class="d-flex justify-content-end mt-4">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+              <div *ngIf="editError" class="alert alert-danger mt-3">{{ editError }}</div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="showUpdateToast" class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100;">
+      <div class="toast show align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+          <div class="toast-body">
+            <strong>Updated</strong>
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="showUpdateToast = false" aria-label="Close"></button>
+        </div>
+      </div>
+    </div>
   `,
-  styles: []
+  styles: [
+    `
+    .modal-blur {
+      filter: blur(4px);
+      pointer-events: none;
+      user-select: none;
+      transition: filter 0.3s;
+    }
+    .modal-backdrop.show {
+      opacity: 0.5;
+      backdrop-filter: blur(4px);
+    }
+    `
+  ]
 })
 export class AddressListComponent implements OnInit {
   entries: AddressBookEntry[] = [];
@@ -137,6 +229,21 @@ export class AddressListComponent implements OnInit {
   searchQuery: string = '';
   private baseUrl = 'https://localhost:7003';
   private failedImages = new Set<string>();
+
+  // Modal state for editing
+  editingEntry: AddressBookEntry | null = null;
+  editForm: any = {};
+  editLoading = false;
+  editError: string | null = null;
+
+  jobs: any[] = [];
+  departments: any[] = [];
+
+  // Add a property to track modal open state for blur effect
+  isEditModalOpen = false;
+
+  // Add a property for showing the update toast
+  showUpdateToast = false;
 
   constructor(private apiService: ApiService, private router: Router) {}
 
@@ -180,6 +287,15 @@ export class AddressListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.apiService.getFormData().subscribe({
+      next: (data: any) => {
+        this.jobs = data.jobs?.data || [];
+        this.departments = data.departments?.data || [];
+      },
+      error: () => {
+        // fallback: just load entries
+      }
+    });
     this.loadEntries();
   }
 
@@ -216,7 +332,74 @@ export class AddressListComponent implements OnInit {
   }
 
   editEntry(entry: AddressBookEntry): void {
-    console.log('Edit entry clicked:', entry);
+    this.editingEntry = entry;
+    this.editError = null;
+    this.isEditModalOpen = true;
+    // Deep copy to avoid mutating the table directly
+    this.editForm = {
+      ...entry,
+      jobId: (entry.job as any)?.id || '',
+      departmentId: (entry.department as any)?.id || ''
+    };
+  }
+
+  closeEditModal(): void {
+    this.isEditModalOpen = false;
+    this.editingEntry = null;
+    this.editForm = {};
+    this.editError = null;
+  }
+
+  saveEdit(): void {
+    if (!this.editingEntry) return;
+    this.editLoading = true;
+    this.editError = null;
+    const formData = new FormData();
+    formData.append('fullName', this.editForm.fullName);
+    formData.append('JobId', String(this.editForm.jobId));
+    formData.append('DepartmentId', String(this.editForm.departmentId));
+    formData.append('mobileNumber', this.editForm.mobileNumber);
+    formData.append('address', this.editForm.address);
+    formData.append('email', this.editForm.email);
+    formData.append('password', this.editForm.password || '');
+    formData.append('dateOfBirth', this.editForm.dateOfBirth || '');
+    // Only append Photo if a new file is selected
+    if (this.editForm.photoFile) {
+      formData.append('Photo', this.editForm.photoFile);
+    }
+    this.sendUpdateRequest(formData);
+  }
+
+  sendUpdateRequest(formData: FormData) {
+    if (!this.editingEntry) return;
+    fetch(`https://localhost:7003/api/AddressBookEntry/UpdateEntry/${this.editingEntry.id}`, {
+      method: 'PUT',
+      body: formData
+    })
+      .then(async response => {
+        this.editLoading = false;
+        if (!response.ok) {
+          const error = await response.text();
+          throw new Error(error);
+        }
+        this.loadEntries();
+        this.closeEditModal();
+        this.showUpdateToast = true;
+        setTimeout(() => this.showUpdateToast = false, 2000);
+      })
+      .catch(err => {
+        this.editLoading = false;
+        this.editError = 'Failed to update entry: ' + (err.message || err);
+      });
+  }
+
+  onEditFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.editForm.photoFile = input.files[0];
+    } else {
+      this.editForm.photoFile = null;
+    }
   }
 
   deleteEntry(id: number): void {

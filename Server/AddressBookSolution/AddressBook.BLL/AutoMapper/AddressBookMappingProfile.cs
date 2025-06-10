@@ -20,7 +20,9 @@ namespace AddressBook.BLL.AutoMapper
             CreateMap<AddressBookEntry, AddressBookEntryDto>().ReverseMap();
             CreateMap<AddressBookEntryDto, AddressBookEntry>();
             CreateMap<CreateAddressBookDto, AddressBookEntry>();
-              
+            CreateMap<UpdateAddressBookEntryDto, AddressBookEntry>();
+            CreateMap<AddressBookEntry, UpdateAddressBookEntryDto>();
+
             CreateMap<AddressBookEntry, CreateAddressBookDto>();
             CreateMap<SearchAddressBookDto, AddressBookEntry>();
             CreateMap<AddressBookEntry, SearchAddressBookDto>();

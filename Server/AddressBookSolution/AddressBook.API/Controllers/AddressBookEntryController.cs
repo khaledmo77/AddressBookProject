@@ -46,7 +46,7 @@ namespace AddressBook.API.Controllers
             }
             return NotFound(response);
         }
-        [HttpGet("formdata")]
+        [HttpGet("formdata")]   
         public async Task<IActionResult> GetFormData()
         {
             var jobs = await _jobService.GetAllAsync();
@@ -84,7 +84,7 @@ namespace AddressBook.API.Controllers
             return BadRequest(response);
         }
         [HttpPut("UpdateEntry/{id}")]
-        public async Task<IActionResult> UpdateEntry(int id, [FromForm] AddressBookEntryDto dto)
+        public async Task<IActionResult> UpdateEntry(int id, [FromForm] UpdateAddressBookEntryDto dto)
         {
             var response = await _addressBookEntryService.UpdateAsync(id, dto);
             if (response.Success)

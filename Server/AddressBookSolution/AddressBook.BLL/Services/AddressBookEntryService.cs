@@ -82,23 +82,34 @@ namespace AddressBook.BLL.Services
             return new ApiResponse<AddressBookEntryDto>(true, "Address Book Entry Added Successfully", resultDto);
         }
 
-        public async  Task<ApiResponse<bool>> UpdateAsync(int id, AddressBookEntryDto dto)
+        public async  Task<ApiResponse<bool>> UpdateAsync(int id, UpdateAddressBookEntryDto dto)
         {
             var existingEntry = await _addressBookEntryRepository.GetByIdAsync(id);
             if (existingEntry == null)
             {
                 return new ApiResponse<bool>(false, "Entry not found.", false);
             }
-            var exists = await _addressBookEntryRepository.ExistsAsync(dto.Email, dto.MobileNumber);
+            var exists = await _addressBookEntryRepository.ExistsAsync(dto.Email, dto.MobileNumber,id);
             if (exists && (existingEntry.Email != dto.Email || existingEntry.MobileNumber != dto.MobileNumber))
             {
                 return new ApiResponse<bool>(false, "Email or Mobile number already exists.", false);
             }
-            var entity = _mapper.Map<AddressBookEntry>(dto);
-            entity.Id = id;
+            
+            if (existingEntry == null) { /* handle not found */ }
+
+            // Map fields from dto to existingEntry (do NOT create a new entity)
+            existingEntry.FullName = dto.FullName;
+            existingEntry.MobileNumber = dto.MobileNumber;
+            existingEntry.Address = dto.Address;
+            existingEntry.Email = dto.Email;
+            existingEntry.Password = dto.Password;
+            existingEntry.JobId = dto.JobId;
+            existingEntry.DepartmentId = dto.DepartmentId;
             if (dto.Photo != null)
-                entity.PhotoPath = FileHelper.SaveFile(dto.Photo);
-            await _addressBookEntryRepository.UpdateAsync(entity);
+                existingEntry.PhotoPath = FileHelper.SaveFile(dto.Photo);
+
+            // Now update
+            await _addressBookEntryRepository.UpdateAsync(existingEntry);
             return new ApiResponse<bool>(true, "Address Book Entry Updated Successfully", true);
 
         }

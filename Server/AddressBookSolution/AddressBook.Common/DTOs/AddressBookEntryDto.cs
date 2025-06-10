@@ -22,7 +22,7 @@ namespace AddressBook.Common.DTOs
             public string Email { get; set; } = null!;
             public string Password { get; set; } = null!;
 
-            public IFormFile Photo { get; set; } = null!;
+            public IFormFile? Photo { get; set; } = null!;
             public string? PhotoPath { get; set; }
            public DateTime DateOfBirth { get; set; }
             public DateTime BirthDateFrom { get; set; }

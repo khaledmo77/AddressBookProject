@@ -23,7 +23,7 @@ import { ApiService, Job } from '../../services/api.service';
         </thead>
         <tbody>
           <tr *ngFor="let job of jobs">
-            <td>{{job.title}}</td>
+            <td>{{job.name}}</td>
             <td>{{job.description}}</td>
             <td>{{job.departmentId}}</td>
             <td>

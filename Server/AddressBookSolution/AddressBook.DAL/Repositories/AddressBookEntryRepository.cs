@@ -1,6 +1,7 @@
 ﻿using AddressBook.DAL.Data;
 using AddressBook.DAL.Interfaces;
 using AddressBook.Domain.Entities;
+using DocumentFormat.OpenXml.InkML;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -85,9 +86,13 @@ namespace AddressBook.DAL.Repositories
 
             return await query.ToListAsync();
         }
-        public async Task<bool> ExistsAsync(string? email, string? mobileNumber)
+        public async Task<bool> ExistsAsync(string? email, string? mobileNumber,int excludeId)
         {
-            return await _dbSet.AnyAsync(x => x.Email == email || x.MobileNumber == mobileNumber);
+            return await _dbSet.AnyAsync(e => (e.Email == email || e.MobileNumber == mobileNumber) && e.Id != excludeId); 
+        }
+        public async Task<bool> ExistsAsync(string email, string mobileNumber)
+        {
+            return await _dbSet.AnyAsync(e => e.Email == email || e.MobileNumber == mobileNumber);
         }
     }
 }
