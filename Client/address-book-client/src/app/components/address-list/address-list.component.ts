@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { ApiService, AddressBookEntry } from '../../services/api.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
@@ -138,7 +138,7 @@ export class AddressListComponent implements OnInit {
   private baseUrl = 'https://localhost:7003';
   private failedImages = new Set<string>();
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private router: Router) {}
 
   getName(obj: any): string {
     return obj?.name || 'N/A';
@@ -212,7 +212,7 @@ export class AddressListComponent implements OnInit {
   }
 
   addEntry(): void {
-    console.log('Add entry clicked');
+    this.router.navigate(['/dashboard/addresses/add']);
   }
 
   editEntry(entry: AddressBookEntry): void {

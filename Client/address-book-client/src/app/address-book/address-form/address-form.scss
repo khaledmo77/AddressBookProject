@@ -1,0 +1,11 @@
+.card.bg-dark .form-select {
+    background-color: #23272b;
+    color: #fff;
+    border-color: #444;
+  }
+  .card.bg-dark .form-select:focus {
+    background-color: #23272b;
+    color: #fff;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13,110,253,.25);
+  }

@@ -14,7 +14,7 @@ export interface Address {
 
 export interface Job {
   id: number;
-  title: string;
+  name: string;
   description: string;
   departmentId: number;
 }
@@ -188,4 +188,10 @@ export class ApiService {
         })
       );
   }
+
+  getFormData() {
+    return this.http.get<{ Jobs: any[]; Departments: any[] }>(`${this.baseUrl}/AddressBookEntry/formdata`, this.httpOptions)
+    
+  }
+  
 } 

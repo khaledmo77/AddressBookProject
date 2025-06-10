@@ -1,1 +1,66 @@
-<p>address-form works!</p>
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-lg">
+        <div class="card-body p-4">
+          <h3 class="mb-4 text-center">Add New Address Book Entry</h3>
+          <form #entryForm="ngForm" (ngSubmit)="onSubmit()" autocomplete="off">
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-control" required [(ngModel)]="fullName" name="fullName" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Job</label>
+              <select class="form-select" required [(ngModel)]="jobId" name="jobId">
+                <option value="" disabled selected>Select job</option>
+                <option *ngFor="let job of jobs" [value]="job.id">{{ job.name }}</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Department</label>
+              <select class="form-select" required [(ngModel)]="departmentId" name="departmentId">
+                <option value="" disabled selected>Select department</option>
+                <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.name }}</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Mobile Number</label>
+              <input type="text" class="form-control" required [(ngModel)]="mobileNumber" name="mobileNumber" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Address</label>
+              <input type="text" class="form-control" [(ngModel)]="address" name="address" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" required [(ngModel)]="email" name="email" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <input type="password" class="form-control" required [(ngModel)]="password" name="password" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Birthday</label>
+              <input type="date" class="form-control" required [(ngModel)]="dateOfBirth" name="dateOfBirth" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Photo</label>
+              <input type="file" class="form-control" (change)="onFileChange($event)" accept="image/*" />
+              <div *ngIf="photoPreview" class="mt-2 text-center">
+                <img [src]="photoPreview" alt="Preview" class="img-thumbnail" style="max-width: 150px; max-height: 150px;" />
+              </div>
+            </div>
+            <div class="d-grid">
+              <button class="btn btn-primary btn-lg" type="submit" [disabled]="entryForm.invalid || loading">
+                <span *ngIf="!loading">Add Entry</span>
+                <span *ngIf="loading"><span class="spinner-border spinner-border-sm"></span> Adding...</span>
+              </button>
+            </div>
+            <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+            <div *ngIf="success" class="alert alert-success mt-3">Entry added successfully!</div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
