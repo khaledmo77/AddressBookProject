@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, catchError, map, tap } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, catchError, map, tap, throwError } from 'rxjs';
 
 // Interfaces
 export interface Address {
@@ -194,4 +194,11 @@ export class ApiService {
     
   }
   
+  registerAdmin(dto: any) {
+    return this.http.post('https://localhost:7003/api/Admin/register', dto, { responseType: 'text' });
+  }
+
+  loginAdmin(dto: any) {
+    return this.http.post('https://localhost:7003/api/Admin/login', dto, { responseType: 'text' });
+  }
 } 

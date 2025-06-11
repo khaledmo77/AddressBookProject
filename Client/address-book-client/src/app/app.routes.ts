@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
 import { LoginComponent } from "./auth/login/login";
-import { RegisterComponent } from "./components/register/register.component";
+import { RegisterComponent } from "./auth/register/register";
 import { DashboardComponent } from "./components/dashboard/dashboard.component";
 import { AddressListComponent } from "./components/address-list/address-list.component";
 import { JobListComponent } from "./components/job-list/job-list.component";
