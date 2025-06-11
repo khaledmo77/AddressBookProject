@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { RouterModule } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
@@ -40,8 +41,9 @@ export class RegisterComponent {
           this.success = 'Registration successful! You can now log in.';
           setTimeout(() => this.router.navigate(['/login']), 1500);
         },
-        error: () => {
-          this.error = 'Registration failed';
+        error: (err: HttpErrorResponse) => {
+          console.error('Registration error:', err);
+          this.error = err.error?.message || 'Registration failed. Please try again.';
         }
       });
     }

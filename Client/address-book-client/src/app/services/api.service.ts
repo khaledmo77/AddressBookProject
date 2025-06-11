@@ -212,7 +212,14 @@ export class ApiService {
   }
   
   registerAdmin(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/api/Admin/register`, credentials);
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/api/Admin/register`, credentials, this.httpOptions)
+      .pipe(
+        map(response => response.data),
+        catchError(error => {
+          console.error('Error registering admin:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   login(credentials: { email: string; password: string }): Observable<any> {
