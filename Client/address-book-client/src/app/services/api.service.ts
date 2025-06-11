@@ -88,44 +88,87 @@ export class ApiService {
 
   // Job endpoints
   getJobs(): Observable<Job[]> {
-    return this.http.get<Job[]>(`${this.baseUrl}/jobs`);
+    console.log('Fetching jobs from:', `${this.baseUrl}/api/Job/GetAllJobs`);
+    return this.http.get<ApiResponse<Job[]>>(`${this.baseUrl}/api/Job/GetAllJobs`, this.httpOptions).pipe(
+      tap(response => console.log('Jobs response:', response)),
+      map(response => response.data),
+      catchError(error => {
+        console.error('Error fetching jobs:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   getJob(id: number): Observable<Job> {
-    return this.http.get<Job>(`${this.baseUrl}/jobs/${id}`);
+    return this.http.get<ApiResponse<Job>>(`${this.baseUrl}/api/Job/GetJob/${id}`, this.httpOptions)
+      .pipe(
+        map(response => response.data)
+      );
   }
 
   addJob(job: Omit<Job, 'id'>): Observable<Job> {
-    return this.http.post<Job>(`${this.baseUrl}/jobs`, job);
+    return this.http.post<ApiResponse<Job>>(`${this.baseUrl}/api/Job/AddJob`, job, this.httpOptions)
+      .pipe(
+        map(response => response.data),
+        catchError(error => {
+          console.error('Error adding job:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   updateJob(id: number, job: Partial<Job>): Observable<Job> {
-    return this.http.put<Job>(`${this.baseUrl}/jobs/${id}`, job);
+    return this.http.put<ApiResponse<Job>>(`${this.baseUrl}/api/Job/UpdateJob/${id}`, job, this.httpOptions)
+      .pipe(
+        map(response => response.data),
+        catchError(error => {
+          console.error('Error updating job:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
   deleteJob(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/jobs/${id}`);
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/api/Job/DeleteJob/${id}`, this.httpOptions)
+      .pipe(
+        map(() => void 0)
+      );
   }
 
   // Department endpoints
   getDepartments(): Observable<Department[]> {
-    return this.http.get<Department[]>(`${this.baseUrl}/departments`);
+    return this.http.get<ApiResponse<Department[]>>(`${this.baseUrl}/api/Department/GetAllDepartments`, this.httpOptions)
+      .pipe(
+        map(response => response.data)
+      );
   }
 
   getDepartment(id: number): Observable<Department> {
-    return this.http.get<Department>(`${this.baseUrl}/departments/${id}`);
+    return this.http.get<ApiResponse<Department>>(`${this.baseUrl}/api/Department/${id}`, this.httpOptions)
+      .pipe(
+        map(response => response.data)
+      );
   }
 
   addDepartment(department: Omit<Department, 'id'>): Observable<Department> {
-    return this.http.post<Department>(`${this.baseUrl}/departments`, department);
+    return this.http.post<ApiResponse<Department>>(`${this.baseUrl}/api/Department/AddDepartment`, department, this.httpOptions)
+      .pipe(
+        map(response => response.data)
+      );
   }
 
   updateDepartment(id: number, department: Partial<Department>): Observable<Department> {
-    return this.http.put<Department>(`${this.baseUrl}/departments/${id}`, department);
+    return this.http.put<ApiResponse<Department>>(`${this.baseUrl}/api/Department/UpdateDepartment/${id}`, department, this.httpOptions)
+      .pipe(
+        map(response => response.data)
+      );
   }
 
   deleteDepartment(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/departments/${id}`);
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/api/Department/DeleteDepartment/${id}`, this.httpOptions)
+      .pipe(
+        map(() => void 0)
+      );
   }
 
   // Address Book Entry endpoints

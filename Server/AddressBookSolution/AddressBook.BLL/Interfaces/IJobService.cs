@@ -12,8 +12,8 @@ namespace AddressBook.BLL.Interfaces
     {
         Task<ApiResponse<List<JobDto>>> GetAllAsync();
         Task<ApiResponse<JobDto>> GetByIdAsync(int id);
-        Task<ApiResponse<bool>> AddAsync(JobDto dto);
-        Task<ApiResponse<bool>> UpdateAsync(int id, JobDto dto);
+        Task<ApiResponse<JobDto>> AddAsync(CreateJobDto dto);
+        Task<ApiResponse<bool>> UpdateAsync(int id, UpdateJobDto dto);
         Task<ApiResponse<bool>> DeleteAsync(int id);
     }
 }

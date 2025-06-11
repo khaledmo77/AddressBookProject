@@ -2,6 +2,8 @@
 using AddressBook.Common.DTOs;
 using AddressBook.Common.Response;
 using AddressBook.DAL.Interfaces;
+using AddressBook.Domain.Entities;
+using AutoMapper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,16 +14,15 @@ namespace AddressBook.BLL.Services
 {
     public class JobService:IJobService
     { 
-        //Empty Untill i need to implement it
-
-        // Example method (to be implemented):
-        // public Task<IEnumerable<JobDto>> GetAllJobsAsync() 
+      
         private readonly IJobRepository _jobRepository;
-        public JobService(IJobRepository jobRepository)
+        private readonly IMapper _mapper;
+        public JobService(IJobRepository jobRepository, IMapper mapper)
         {
             _jobRepository = jobRepository;
+            _mapper = mapper;
         }
-      public async Task<ApiResponse<List<JobDto>>> GetAllAsync()
+        public async Task<ApiResponse<List<JobDto>>> GetAllAsync()
         {
             var jobs = await _jobRepository.GetAllAsync();
             var jobDtos = jobs.Select(job => new JobDto
@@ -52,21 +53,39 @@ namespace AddressBook.BLL.Services
             return new ApiResponse<JobDto>(true, "Fetched successfully", jobDto);
 
         }
-        public async Task<ApiResponse<bool>> AddAsync(JobDto dto)
+        public async Task<ApiResponse<JobDto>> AddAsync(CreateJobDto dto)
         {
-            if (dto == null)
+            if (dto == null || string.IsNullOrWhiteSpace(dto.Name))
             {
-                return new ApiResponse<bool>(false, "Invalid job data", false);
+                return new ApiResponse<JobDto>(false, "Invalid job data.", null);
             }
-            var job = new AddressBook.Domain.Entities.Job
-            {
-                Name = dto.Name,
-            };
-            await _jobRepository.AddAsync(job);
-            return new ApiResponse<bool>(true, "Job added successfully", true);
 
+            // Optional: check for existing job if uniqueness is required
+            var existingJob = await _jobRepository.GetByNameAsync(dto.Name);
+            if (existingJob != null)
+            {
+                return new ApiResponse<JobDto>(false, "A job with this title already exists.", null);
+            }
+
+            var job = new Job
+            {
+               Name= dto.Name,
+              
+            };
+
+            await _jobRepository.AddAsync(job);
+
+            var resultDto = new JobDto
+            {
+                Id = job.Id,
+                    Name = job.Name,
+                
+            };
+
+            return new ApiResponse<JobDto>(true, "Job added successfully", resultDto);
         }
-        public async Task<ApiResponse<bool>> UpdateAsync(int id, JobDto dto)
+
+        public async Task<ApiResponse<bool>> UpdateAsync(int id, UpdateJobDto dto)
         {
             if (dto == null || id <= 0)
             {

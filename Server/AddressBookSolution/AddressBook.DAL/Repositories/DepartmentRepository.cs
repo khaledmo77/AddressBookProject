@@ -21,7 +21,7 @@ namespace AddressBook.DAL.Repositories
      //getbynameasync
         public async Task<Department?> GetByNameAsync(string name)
         {
-            return await _dbSet.FirstOrDefaultAsync(d => d.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
+            return await _dbSet.FirstOrDefaultAsync(d => d.Name.ToLower() == name.ToLower());
         }
     
    

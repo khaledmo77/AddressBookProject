@@ -24,6 +24,10 @@ namespace AddressBook.BLL.AutoMapper
             CreateMap<AddressBookEntry, UpdateAddressBookEntryDto>();
             CreateMap<ExportAddressBookToExcelDto,AddressBookEntry>();
             CreateMap<AddressBookEntry, ExportAddressBookToExcelDto>();
+            CreateMap<JobDto,CreateJobDto>();
+            CreateMap<CreateJobDto, JobDto>();
+            CreateMap<DepartmentDto, CreateDepartmentDto>();
+            CreateMap<CreateDepartmentDto, DepartmentDto>();
 
             CreateMap<AddressBookEntry, CreateAddressBookDto>();
             CreateMap<SearchAddressBookDto, AddressBookEntry>();

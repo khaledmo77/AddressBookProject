@@ -10,5 +10,7 @@ namespace AddressBook.DAL.Interfaces
 {
     public interface IJobRepository : IGenericRepository<Job>
     {
+        Task<Job?> GetByNameAsync(string name);
+
     }
 }
