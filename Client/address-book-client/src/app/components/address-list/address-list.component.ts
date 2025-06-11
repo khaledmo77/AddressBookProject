@@ -228,6 +228,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class AddressListComponent implements OnInit {
   entries: AddressBookEntry[] = [];
+  private originalEntries: AddressBookEntry[] = [];
   loading = false;
   error: string | null = null;
   debugInfo: any = null;
@@ -277,18 +278,26 @@ export class AddressListComponent implements OnInit {
   }
   onSearch(): void {
     if (!this.searchQuery.trim()) {
-      this.loadEntries();
+      this.entries = [...this.originalEntries];
       return;
     }
 
     const query = this.searchQuery.toLowerCase().trim();
-    this.entries = this.entries.filter(entry => 
-      entry.fullName.toLowerCase().includes(query) ||
-      entry.email.toLowerCase().includes(query) ||
-      this.getName(entry.job).toLowerCase().includes(query) ||
-      this.getName(entry.department).toLowerCase().includes(query) ||
-      entry.mobileNumber.includes(query)
-    );
+    this.entries = this.originalEntries.filter(entry => {
+      const fullName = entry.fullName?.toLowerCase() || '';
+      const email = entry.email?.toLowerCase() || '';
+      const jobName = this.getName(entry.job)?.toLowerCase() || '';
+      const departmentName = this.getName(entry.department)?.toLowerCase() || '';
+      const mobileNumber = entry.mobileNumber?.toLowerCase() || '';
+      const address = entry.address?.toLowerCase() || '';
+
+      return fullName.includes(query) ||
+             email.includes(query) ||
+             jobName.includes(query) ||
+             departmentName.includes(query) ||
+             mobileNumber.includes(query) ||
+             address.includes(query);
+    });
   }
 
   ngOnInit(): void {
@@ -311,6 +320,7 @@ export class AddressListComponent implements OnInit {
 
     this.apiService.getAddressBookEntries().subscribe({
       next: (entries: AddressBookEntry[]) => {
+        this.originalEntries = entries;
         this.entries = entries;
         console.log('Loaded entries:', entries);
         if (entries.length > 0) {
