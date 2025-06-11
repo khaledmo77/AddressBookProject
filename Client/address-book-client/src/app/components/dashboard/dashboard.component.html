@@ -1,0 +1,52 @@
+<div class="dashboard-container">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar" [class.open]="isMenuOpen">
+    <div class="sidebar-header">
+      <h2>Address Book</h2>
+      <button class="menu-toggle" (click)="toggleMenu()">
+        <span class="material-icons">{{ isMenuOpen ? 'close' : 'menu' }}</span>
+      </button>
+    </div>
+    
+    <ul class="nav-links">
+      <li>
+        <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <span class="material-icons">dashboard</span>
+          Dashboard
+        </a>
+      </li>
+      <li>
+        <a routerLink="/dashboard/addresses" routerLinkActive="active">
+          <span class="material-icons">contacts</span>
+          Addresses
+        </a>
+      </li>
+      <li>
+        <a routerLink="/dashboard/jobs" routerLinkActive="active">
+          <span class="material-icons">work</span>
+          Jobs
+        </a>
+      </li>
+      <li>
+        <a routerLink="/dashboard/departments" routerLinkActive="active">
+          <span class="material-icons">business</span>
+          Departments
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="top-bar">
+      <div class="user-info">
+        <span class="material-icons">account_circle</span>
+        <span>Welcome, Admin</span>
+      </div>
+    </header>
+
+    <div class="content">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div> 

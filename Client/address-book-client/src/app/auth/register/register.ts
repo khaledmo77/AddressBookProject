@@ -1,34 +1,48 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-register',
-  imports: [CommonModule, FormsModule],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './register.html',
   styleUrl: './register.scss'
 })
 export class RegisterComponent {
-  email: string = '';
-  password: string = '';
+  registerForm: FormGroup;
   error: string = '';
   success: string = '';
 
-  constructor(private api: ApiService, private router: Router) {}
+  constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
+    this.registerForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required]
+    }, { validator: this.passwordMatchValidator });
+  }
 
-  onRegister() {
+  passwordMatchValidator(g: FormGroup) {
+    return g.get('password')?.value === g.get('confirmPassword')?.value
+      ? null : { mismatch: true };
+  }
+
+  onSubmit() {
     this.error = '';
     this.success = '';
-    this.api.registerAdmin({ email: this.email, password: this.password }).subscribe({
-      next: () => {
-        this.success = 'Registration successful! You can now log in.';
-        setTimeout(() => this.router.navigate(['/login']), 1500);
-      },
-      error: () => {
-        this.error = 'Registration failed';
-      }
-    });
+    if (this.registerForm.valid) {
+      const { email, password } = this.registerForm.value;
+      this.api.registerAdmin({ email, password }).subscribe({
+        next: () => {
+          this.success = 'Registration successful! You can now log in.';
+          setTimeout(() => this.router.navigate(['/login']), 1500);
+        },
+        error: () => {
+          this.error = 'Registration failed';
+        }
+      });
+    }
   }
 }

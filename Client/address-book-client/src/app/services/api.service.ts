@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, map, tap, throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 // Interfaces
 export interface Address {
@@ -54,7 +55,7 @@ interface ApiResponse<T> {
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'https://localhost:7003/api';
+  private baseUrl = environment.apiUrl;
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
@@ -129,76 +130,52 @@ export class ApiService {
 
   // Address Book Entry endpoints
   getAddressBookEntries(): Observable<AddressBookEntry[]> {
-    console.log('Making GET request to:', `${this.baseUrl}/AddressBookEntry/GetAllEntries`);
-    return this.http.get<ApiResponse<AddressBookEntry[]>>(`${this.baseUrl}/AddressBookEntry/GetAllEntries`, this.httpOptions)
+    return this.http.get<ApiResponse<AddressBookEntry[]>>(`${this.baseUrl}/api/AddressBookEntry/GetAllEntries`, this.httpOptions)
       .pipe(
-        tap(response => console.log('API Response:', response)),
-        map(response => response.data),
-        catchError(error => {
-          console.error('API Error:', error);
-          throw error;
-        })
+        map(response => response.data)
       );
   }
 
   getAddressBookEntry(id: number): Observable<AddressBookEntry> {
-    return this.http.get<ApiResponse<AddressBookEntry>>(`${this.baseUrl}/AddressBookEntry/GetEntry/${id}`, this.httpOptions)
+    return this.http.get<ApiResponse<AddressBookEntry>>(`${this.baseUrl}/api/AddressBookEntry/GetEntryById/${id}`, this.httpOptions)
       .pipe(
-        tap(response => console.log('API Response:', response)),
-        map(response => response.data),
-        catchError(error => {
-          console.error('API Error:', error);
-          throw error;
-        })
+        map(response => response.data)
       );
   }
 
   addAddressBookEntry(entry: Omit<AddressBookEntry, 'id'>): Observable<AddressBookEntry> {
-    return this.http.post<ApiResponse<AddressBookEntry>>(`${this.baseUrl}/AddressBookEntry/CreateEntry`, entry, this.httpOptions)
+    return this.http.post<ApiResponse<AddressBookEntry>>(`${this.baseUrl}/api/AddressBookEntry/AddEntry`, entry, this.httpOptions)
       .pipe(
-        tap(response => console.log('API Response:', response)),
-        map(response => response.data),
-        catchError(error => {
-          console.error('API Error:', error);
-          throw error;
-        })
+        map(response => response.data)
       );
   }
 
   updateAddressBookEntry(id: number, entry: Partial<AddressBookEntry>): Observable<AddressBookEntry> {
-    return this.http.put<ApiResponse<AddressBookEntry>>(`${this.baseUrl}/AddressBookEntry/UpdateEntry/${id}`, entry, this.httpOptions)
+    return this.http.put<ApiResponse<AddressBookEntry>>(`${this.baseUrl}/api/AddressBookEntry/UpdateEntry/${id}`, entry, this.httpOptions)
       .pipe(
-        tap(response => console.log('API Response:', response)),
-        map(response => response.data),
-        catchError(error => {
-          console.error('API Error:', error);
-          throw error;
-        })
+        map(response => response.data)
       );
   }
 
   deleteAddressBookEntry(id: number): Observable<void> {
-    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/AddressBookEntry/DeleteEntry/${id}`, this.httpOptions)
+    return this.http.delete<ApiResponse<void>>(`${this.baseUrl}/api/AddressBookEntry/DeleteEntry/${id}`, this.httpOptions)
       .pipe(
-        tap(response => console.log('API Response:', response)),
-        map(() => void 0),
-        catchError(error => {
-          console.error('API Error:', error);
-          throw error;
-        })
+        map(() => void 0)
       );
   }
 
   getFormData() {
-    return this.http.get<{ Jobs: any[]; Departments: any[] }>(`${this.baseUrl}/AddressBookEntry/formdata`, this.httpOptions)
-    
+    return this.http.get<{ Jobs: any[]; Departments: any[] }>(`${this.baseUrl}/api/AddressBookEntry/formdata`, this.httpOptions)
   }
   
-  registerAdmin(dto: any) {
-    return this.http.post('https://localhost:7003/api/Admin/register', dto, { responseType: 'text' });
+  registerAdmin(credentials: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/api/Admin/register`, credentials);
   }
 
-  loginAdmin(dto: any) {
-    return this.http.post('https://localhost:7003/api/Admin/login', dto, { responseType: 'text' });
+  login(credentials: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.baseUrl}/api/Admin/login`, credentials, { responseType: 'text' })
+      .pipe(
+        map(response => ({ token: response }))
+      );
   }
 } 

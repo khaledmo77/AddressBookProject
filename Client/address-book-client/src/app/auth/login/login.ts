@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-login',
@@ -16,40 +16,40 @@ export class LoginComponent {
   error: string = '';
   loading: boolean = false;
 
-  constructor(
-    private fb: FormBuilder,
-    private api: ApiService,
-    private router: Router
-  ) {
+  constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  get email() { return this.loginForm.get('email'); }
-  get password() { return this.loginForm.get('password'); }
-
   onLogin() {
+    this.error = '';
+    this.loading = true;
+    
     if (this.loginForm.invalid) {
+      this.loading = false;
       return;
     }
 
-    this.error = '';
-    this.loading = true;
-
-    this.api.loginAdmin(this.loginForm.value).subscribe({
-      next: (token: any) => {
-        localStorage.setItem('token', token);
-        this.router.navigate(['/dashboard']);
+    const { email, password } = this.loginForm.value;
+    
+    this.api.login({ email, password }).subscribe({
+      next: (response) => {
+        if (response && response.token) {
+          // Store the token in localStorage
+          localStorage.setItem('token', response.token);
+          // Navigate to dashboard
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.error = 'Invalid response from server';
+          this.loading = false;
+        }
       },
       error: (error) => {
+        console.error('Login error:', error);
+        this.error = error.error?.message || 'Invalid email or password';
         this.loading = false;
-        if (error.status === 401) {
-          this.error = 'Invalid email or password';
-        } else {
-          this.error = 'An error occurred. Please try again.';
-        }
       }
     });
   }
