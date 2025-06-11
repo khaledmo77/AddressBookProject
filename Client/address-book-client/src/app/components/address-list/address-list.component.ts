@@ -49,9 +49,14 @@ import { FormsModule } from '@angular/forms';
     <div class="container">
       <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h2">Address Book Entries</h1>
-        <button (click)="addEntry()" class="btn btn-primary">
-          <i class="bi bi-plus-circle"></i> Add New Entry
-        </button>
+        <div class="d-flex gap-2">
+          <button (click)="exportToExcel()" class="btn btn-success">
+            <i class="bi bi-file-excel"></i> Export to Excel
+          </button>
+          <button (click)="addEntry()" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Entry
+          </button>
+        </div>
       </div>
 
       <!-- Loading State -->
@@ -419,5 +424,34 @@ export class AddressListComponent implements OnInit {
         }
       });
     }
+  }
+
+  exportToExcel(): void {
+    this.apiService.exportToExcel().subscribe({
+      next: (blob: Blob) => {
+        // Create a URL for the blob
+        const url = window.URL.createObjectURL(blob);
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'AddressBookEntries.xlsx';
+        // Append to the document
+        document.body.appendChild(link);
+        // Trigger the download
+        link.click();
+        // Clean up
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(link);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.error = 'Failed to export to Excel. Please try again later.';
+        this.debugInfo = {
+          status: err.status,
+          statusText: err.statusText,
+          error: err.error,
+          message: err.message
+        };
+      }
+    });
   }
 }

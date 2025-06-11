@@ -178,4 +178,10 @@ export class ApiService {
         map(response => ({ token: response }))
       );
   }
+
+  exportToExcel(): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/api/AddressBookEntry/ExportToExcel`, {
+      responseType: 'blob'
+    });
+  }
 } 

@@ -148,7 +148,7 @@ namespace AddressBook.BLL.Services
        public async Task<byte[]> ExportToExcelAsync()
         {
             var entries = await _addressBookEntryRepository.GetAllAsync();
-            var dtoList = _mapper.Map<List<AddressBookEntryDto>>(entries);
+            var dtoList = _mapper.Map<List<ExportAddressBookToExcelDto>>(entries);
             return ExcelExportHelper.ExportAddressBookToExcel(dtoList);
 
         }

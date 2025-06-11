@@ -9,7 +9,7 @@ namespace AddressBook.Common.Helpers
 {
     public static class ExcelExportHelper
     {
-        public static byte[] ExportAddressBookToExcel(IEnumerable<AddressBookEntryDto> entries) // ✅ Correct class name
+        public static byte[] ExportAddressBookToExcel(IEnumerable<ExportAddressBookToExcelDto> entries) // ✅ Correct class name
         {
             using var workbook = new XLWorkbook();
             var worksheet = workbook.Worksheets.Add("AddressBook");
@@ -28,8 +28,8 @@ namespace AddressBook.Common.Helpers
             foreach (var entry in entries)
             {
                 worksheet.Cell(row, 1).Value = entry.FullName;
-                worksheet.Cell(row, 2).Value = entry.Job.Name;
-                worksheet.Cell(row, 3).Value = entry.Department.Name;
+                worksheet.Cell(row, 2).Value = entry.JobTitle;
+                worksheet.Cell(row, 3).Value = entry.Department;
                 worksheet.Cell(row, 4).Value = entry.MobileNumber;
                 worksheet.Cell(row, 5).Value = entry.DateOfBirth;
                 worksheet.Cell(row, 6).Value = entry.Address;
